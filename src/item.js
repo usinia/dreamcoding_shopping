@@ -1,10 +1,12 @@
+// fetch data.json file
 const loadItems = async () => {
   return fetch("data/data.json")
     .then((response) => response.json())
     .catch(console.log);
 };
 
-const paintItems = ({ items }) => {
+// paint item list
+const paintItems = (items) => {
   const container = document.querySelector(".items");
 
   const itemLiList = items.map((item) => {
@@ -26,7 +28,33 @@ const paintItems = ({ items }) => {
     return li;
   });
 
-  container.append(...itemLiList);
+  container.replaceChildren(...itemLiList);
 };
 
-loadItems().then(paintItems);
+// set event listener
+const setEventListener = (items) => {
+  const buttons = document.querySelectorAll(".btn");
+  buttons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const el = e.target;
+      if (el.classList.contains("colorBtn")) {
+        paintItems(items.filter((item) => el.classList.contains(item.color)));
+      } else {
+        paintItems(items.filter((item) => item.type === el.alt));
+      }
+    });
+  });
+
+  const logo = document.querySelector(".logo");
+  // logo.addEventListener("click", () => {
+  //   paintItems(items);
+  // });
+  // without function
+  logo.addEventListener("click", paintItems.bind(null, items));
+};
+
+// execute
+loadItems().then(({ items }) => {
+  paintItems(items);
+  setEventListener(items);
+});
