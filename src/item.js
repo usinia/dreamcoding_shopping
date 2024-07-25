@@ -33,24 +33,18 @@ const paintItems = (items) => {
 
 // set event listener
 const setEventListener = (items) => {
-  const buttons = document.querySelectorAll(".btn");
-  buttons.forEach((button) => {
-    button.addEventListener("click", (e) => {
-      const el = e.target;
-      if (el.classList.contains("colorBtn")) {
-        paintItems(items.filter((item) => el.classList.contains(item.color)));
-      } else {
-        paintItems(items.filter((item) => item.type === el.alt));
-      }
-    });
-  });
-
   const logo = document.querySelector(".logo");
-  // logo.addEventListener("click", () => {
-  //   paintItems(items);
-  // });
-  // without function
-  logo.addEventListener("click", paintItems.bind(null, items));
+  logo.addEventListener("click", () => paintItems(items));
+
+  // ** event 위임 - 개개 버튼 대신 버튼의 container 에 이벤트 등록 **
+  const buttons = document.querySelector(".buttons");
+  buttons.addEventListener("click", (e) => onButtonClick(e, items));
+};
+
+const onButtonClick = (evt, items) => {
+  const { key, value } = evt.target.dataset;
+  if (key == null || value == null) return;
+  paintItems(items.filter((item) => item[key] === value));
 };
 
 // execute
